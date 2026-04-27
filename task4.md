@@ -26,8 +26,6 @@ sudo systemctl start nginx
 
 ## 2. Настройка локального домена
 
-### 2.1 Добавляем запись в hosts
-
 Редактируем файл:
 
 ```bash
@@ -92,7 +90,7 @@ server {
 
 ---
 
-### 3.1 Создаем директорию сайта
+### 3.3 Создаем директорию сайта
 
 ```bash
 sudo mkdir -p /var/www/app.local
@@ -106,7 +104,7 @@ echo "app.local is working" | sudo tee /var/www/app.local/index.html
 
 ---
 
-### 3.2 Активируем сайт
+### 3.4 Активируем сайт
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/app.local /etc/nginx/sites-enabled/
