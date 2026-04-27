@@ -55,7 +55,7 @@ sudo openssl req -x509 -nodes -days 365 \
 -newkey rsa:2048 \
 -keyout /etc/nginx/ssl/app.local.key \
 -out /etc/nginx/ssl/app.local.crt \
--subj "/C=DE/L=Frankfurt/O=LocalDev/CN=app.local"
+-subj "/C=RU/L=Moscow/O=LocalDev/CN=app.local"
 ```
 
 
