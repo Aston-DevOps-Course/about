@@ -1,0 +1,42 @@
+---
+- name: Configure web server
+  hosts: web
+  become: true
+
+  vars:
+    nginx_root: /var/www/html
+
+  tasks:
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Upgrade all packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Deploy custom index.html
+      ansible.builtin.template:
+        src: templates/index.html.j2
+        dest: "{{ nginx_root }}/index.html"
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
