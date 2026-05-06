@@ -33,7 +33,7 @@ cd kanban-backend
 docker build -t kanban-backend .
 ```
 
-##▶ Запуск отдельно (опционально)
+## Запуск отдельно (опционально)
 
 ```bash
 docker run -p 8081:8081 kanban-backend
