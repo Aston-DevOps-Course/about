@@ -5,7 +5,7 @@
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
-![DevOps](https://img.shields.io/badge/DevOps-0A0A0A?style=for-the-badge&logo=githubactions&logoColor=white)
+
 - Backend: Spring Boot (kanban-backend)
 - Frontend: Angular (kanban-frontend)
 - Load Balancer: Nginx (балансировка frontend)
