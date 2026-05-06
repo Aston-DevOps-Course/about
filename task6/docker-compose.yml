@@ -17,6 +17,8 @@ services:
   backend:
     build: ../kanban-backend
     container_name: kanban-app
+    depends_on:
+      - postgres
     ports:
       - "8081:8080"
     restart: unless-stopped
