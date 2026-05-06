@@ -71,7 +71,7 @@ docker run -p 80:80 kanban-frontend
 cd task6
 ```
 
-## ▶️ Запуск всей системы
+## Запуск всей системы
 
 ```bash
 docker compose up --build
