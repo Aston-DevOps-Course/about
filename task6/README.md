@@ -6,11 +6,6 @@
 ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 
-- Backend: Spring Boot (kanban-backend)
-- Frontend: Angular (kanban-frontend)
-- Load Balancer: Nginx (балансировка frontend)
-- Docker Compose (оркестрация)
-
 ---
 
 ## Репозитории
