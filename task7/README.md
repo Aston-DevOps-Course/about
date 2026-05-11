@@ -1,4 +1,4 @@
-# Task 7 — 
+# Task 7 — Reverse Proxy, HTTPS, Logging, Monitoring
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
@@ -196,7 +196,7 @@ Nginx настроен на HTTPS:
 
 ---
 
-# 📈 Настройка Grafana
+# Настройка Grafana
 
 ## Первый вход
 
