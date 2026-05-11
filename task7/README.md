@@ -1,4 +1,4 @@
-# Task 6 — Docker
+# Task 7 — 
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
@@ -8,8 +8,36 @@
 
 ---
 
-## Репозитории
+В данном задании реализована инфраструктура для Kanban-приложения с использованием Docker Compose.
 
+Состав системы:
+
+- Spring Boot backend
+- Angular frontend
+- Nginx reverse proxy
+- HTTPS
+- Load balancing frontend-контейнеров
+- Централизованный сбор логов
+- Централизованный сбор метрик
+- Grafana dashboards
+
+
+```text id="l7b6o8"
+task7/
+├── docker-compose.yml
+├── nginx/
+│   └── default.conf
+├── certs/
+├── monitoring/
+│   └── prometheus.yml
+├── logging/
+│   └── promtail-config.yml
+└── README.md
+```
+
+---
+
+## Репозитории
 
 Backend: 
 https://github.com/Aston-DevOps-Course/kanban-backend
@@ -19,132 +47,352 @@ https://github.com/Aston-DevOps-Course/kanban-frontend
 
 ---
 
-# Сборка backend
+#  Настройка app.local
 
-Перейти в репозиторий backend:
+## Linux/macOS
 
-```bash
-cd kanban-backend
-````
+Открыть:
 
-## Сборка Docker image
-
-```bash
-docker build -t kanban-backend .
+```bash id="qvq0v4"
+sudo nano /etc/hosts
 ```
 
-## Запуск отдельно (опционально)
+## Windows
 
-```bash
-docker run -p 8081:8081 kanban-backend
+Открыть файл:
+
+```text id="ylzjvj"
+C:\Windows\System32\drivers\etc\hosts
 ```
 
----
+В обоих вариантах обавить строку:
 
-# Сборка frontend
-
-Перейти в репозиторий frontend:
-
-```bash
-cd kanban-frontend
-```
-
-## Сборка Docker image
-
-```bash
-docker build -t kanban-frontend .
-```
-
-##  Запуск отдельно (опционально)
-
-```bash
-docker run -p 80:80 kanban-frontend
+```text id="4epp7h"
+127.0.0.1 app.local
 ```
 
 ---
 
-# Запуск через Docker Compose (основной способ)
+# Генерация HTTPS сертификата
 
-Перейти в папку task6:
+Из папки `task7` выполнить:
 
-```bash
-cd task6
+```bash id="okfn6j"
+mkdir certs
 ```
 
-## Запуск всей системы
+```bash id="t8j9sm"
+openssl req -x509 -nodes -days 365 \
+-newkey rsa:2048 \
+-keyout certs/app.local.key \
+-out certs/app.local.crt
+```
 
-```bash
+---
+
+# Запуск проекта
+
+Из папки `task7`:
+
+```bash id="f0s8yb"
 docker compose up --build
 ```
 
 ---
 
-# Доступ к приложению
+# Доступ к сервисам
 
-Frontend (через балансировщик):
+## Frontend
 
+```text id="lkrvsz"
+https://app.local
 ```
-http://localhost:8080
+
+## Backend API
+
+```text id="y7qv8w"
+https://app.local/api/
 ```
 
-Backend API:
+## Grafana
 
+```text id="4x7o5k"
+http://localhost:3000
 ```
-http://localhost:8081
+
+## Prometheus
+
+```text id="jfjmr8"
+http://localhost:9090
+```
+
+## cAdvisor
+
+```text id="d6mmtg"
+http://localhost:8088
 ```
 
 ---
 
-# Архитектура (Load Balancing)
+# Load Balancing
 
-Frontend работает в 2 экземплярах:
+Frontend работает в двух экземплярах:
 
 * frontend1
 * frontend2
 
-Перед ними стоит Nginx load balancer, который распределяет запросы между инстансами.
+Nginx распределяет запросы между контейнерами через upstream.
 
 ---
 
-# Docker Compose структура
+# HTTPS
 
-Сервисы:
+Nginx настроен на HTTPS:
 
-* backend (Spring Boot)
-* frontend1 (Angular + Nginx)
-* frontend2 (Angular + Nginx)
-* nginx (load balancer)
+* HTTP автоматически перенаправляется на HTTPS
+* используются self-signed сертификаты
 
 ---
 
-# Порядок запуска
+# Очередность запуска контейнеров
 
-1. backend поднимается после базы данных
-2. frontend1 / frontend2 запускаются после backend
-3. nginx стартует после frontend контейнеров
+1. PostgreSQL
+2. Backend
+3. Frontend контейнеры
+4. Nginx
+5. Monitoring stack
+
+---
+
+# Централизованный сбор логов
+
+## Используемые сервисы
+
+* Loki
+* Promtail
+
+## Как работает
+
+1. Docker контейнеры записывают логи
+2. Promtail считывает Docker logs
+3. Loki хранит логи
+4. Grafana отображает логи
+
+---
+
+# Централизованный сбор метрик
+
+## Используемые сервисы
+
+* cAdvisor
+* Prometheus
+* Grafana
+
+## Как работает
+
+1. cAdvisor собирает метрики контейнеров
+2. Prometheus periodically scrape metrics
+3. Grafana визуализирует метрики
+
+---
+
+# 📈 Настройка Grafana
+
+## Первый вход
+
+Открыть:
+
+```text id="0rffaw"
+http://localhost:3000
+```
+
+Стандартные данные:
+
+```text id="4lv8qf"
+login: admin
+password: admin
+```
+
+После первого входа Grafana предложит сменить пароль.
+
+---
+
+# Добавление Prometheus datasource
+
+## Перейти:
+
+```text id="knud14"
+Connections → Data sources → Add data source
+```
+
+Выбрать:
+
+```text id="od3e4o"
+Prometheus
+```
+
+URL:
+
+```text id="myq58x"
+http://prometheus:9090
+```
+
+Нажать:
+
+```text id="zrb7pw"
+Save & Test
+```
+
+---
+
+# Добавление Loki datasource
+
+## Перейти:
+
+```text id="6c05fw"
+Connections → Data sources → Add data source
+```
+
+Выбрать:
+
+```text id="ep6qk7"
+Loki
+```
+
+URL:
+
+```text id="7utdwy"
+http://loki:3100
+```
+
+Нажать:
+
+```text id="3oy2sd"
+Save & Test
+```
+
+---
+
+# Создание Dashboard для метрик
+
+## Перейти:
+
+```text id="89r9yh"
+Dashboards → New Dashboard
+```
+
+## Нажать:
+
+```text id="4b4lph"
+Add Visualization
+```
+
+## Выбрать datasource:
+
+```text id="7p8z5f"
+Prometheus
+```
+
+---
+
+# Примеры метрик
+
+## CPU usage контейнеров
+
+```text id="brtxkz"
+rate(container_cpu_usage_seconds_total[1m])
+```
+
+## Memory usage
+
+```text id="jlwmxh"
+container_memory_usage_bytes
+```
+
+## Network traffic
+
+```text id="l6fg4h"
+rate(container_network_receive_bytes_total[1m])
+```
+
+## Container filesystem usage
+
+```text id="2rjgwt"
+container_fs_usage_bytes
+```
+
+---
+
+# Создание Dashboard для логов
+
+## Создать новую visualization
+
+Datasource:
+
+```text id="9bx6fh"
+Loki
+```
+
+---
+
+# Примеры Loki запросов
+
+## Все логи
+
+```text id="s8k9bl"
+{job="docker"}
+```
+
+## Логи backend
+
+```text id="7vtgtm"
+{container="kanban-app"}
+```
+
+## Логи frontend
+
+```text id="m7r87w"
+{container="frontend1"}
+```
 
 ---
 
 # Использованные best practices
 
-## Backend:
+## Docker
 
-* multi-stage build (build + runtime)
-* lightweight JDK image
-* non-root user
-* clean separation build/runtime
+* multi-stage builds
+* lightweight images
+* isolated containers
+* named volumes
 
-## Frontend:
+## Infrastructure
 
-* Angular build stage (Node.js)
-* production static serving через Nginx
-* minimal nginx image
-* no dev server in production
+* reverse proxy
+* HTTPS
+* load balancing
+* centralized logging
+* centralized monitoring
 
-## Infrastructure:
+## Monitoring
 
-* docker-compose orchestration
-* load balancing через nginx
-* горизонтальное масштабирование frontend (2 инстанса)
+* metrics separation
+* log aggregation
+* observability stack
 
 ---
+
+# Итог:
+
+Реализована production-like инфраструктура:
+
+* reverse proxy
+* HTTPS
+* frontend load balancing
+* централизованные логи
+* централизованные метрики
+* monitoring stack
+* Grafana dashboards
+* orchestration через Docker Compose
+
+```
